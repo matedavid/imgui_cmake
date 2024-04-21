@@ -26,7 +26,7 @@ target_include_directories(imgui PUBLIC
         $<BUILD_INTERFACE:${ROOT}>
         $<INSTALL_INTERFACE:include>)
 
-foreach(BACKEND glfw vulkan)
+foreach(BACKEND glfw vulkan opengl3)
     set(NAME imgui_impl_${BACKEND})
     set(HEADER ${ROOT}/backends/${NAME}.h)
     add_library(${NAME} STATIC ${ROOT}/backends/${NAME}.cpp ${HEADER})
