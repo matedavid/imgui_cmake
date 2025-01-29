@@ -26,17 +26,27 @@ target_include_directories(imgui PUBLIC
         $<BUILD_INTERFACE:${ROOT}>
         $<INSTALL_INTERFACE:include>)
 
-foreach(BACKEND glfw vulkan opengl3)
+function(create_backend BACKEND)
     set(NAME imgui_impl_${BACKEND})
     set(HEADER ${ROOT}/backends/${NAME}.h)
+
     add_library(${NAME} STATIC ${ROOT}/backends/${NAME}.cpp ${HEADER})
+
     target_link_libraries(${NAME} PUBLIC imgui)
     target_include_directories(${NAME} PUBLIC
             $<BUILD_INTERFACE:${ROOT}/backends>
             $<INSTALL_INTERFACE:include>)
+
     LIST(APPEND INSTALL_TARGETS ${NAME})
     LIST(APPEND INSTALL_HEADERS ${HEADER})
-endforeach()
+endfunction()
+
+create_backend(glfw)
 
 target_link_libraries(imgui_impl_glfw PRIVATE glfw)
-target_link_libraries(imgui_impl_vulkan PRIVATE vulkan)
+    
+create_backend(vulkan)
+    
+find_package(Vulkan REQUIRED)
+target_link_libraries(imgui_impl_vulkan PRIVATE ${Vulkan_LIBRARIES})
+target_include_directories(imgui_impl_vulkan PUBLIC ${Vulkan_INCLUDE_DIRS})
